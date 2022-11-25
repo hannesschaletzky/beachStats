@@ -1,1 +1,0 @@
-SELECT MAX("DVV_ID") FROM public."Players"
