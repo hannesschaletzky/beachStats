@@ -1,16 +1,8 @@
 name: CI
 on: [push]
 jobs:
-  test:
-    name: 'test'
-    runs-on: ubuntu-latest
-    steps:
-      - name: print root
-        run: exit 1
-
   deploy:
     name: 'deploy'
-    needs: test
     runs-on: ubuntu-latest
     steps:
       # https://blog.benoitblanchon.fr/github-action-run-ssh-commands/
@@ -34,13 +26,13 @@ jobs:
         run: ssh droplet 'whoami'
 
       - name: update repo
-        run: ssh droplet 'cd /repos/beachStats/ && git pull && npm install'
+        run: ssh droplet 'cd /repos/beachstats_backend/ && git pull && npm install'
 
       - name: build repo
-        run: ssh droplet 'cd /repos/beachStats/ && npm run build'
+        run: ssh droplet 'cd /repos/beachstats_backend/ && npm run build'
 
-      - name: copy .env
-        run: ssh droplet 'cd /repos/beachStats/ && cp /repos/beachStats/.env /repos/beachStats/build/'
+      - name: copy .env to build folder
+        run: ssh droplet 'cp /repos/beachstats_backend/.env /repos/beachstats_backend/build/'
 
       - name: reload pm2 process
-        run: ssh droplet 'source ~/.nvm/nvm.sh && cd /repos/beachStats/ && pm2 reload pm2/prod.config.js'
+        run: ssh droplet 'source ~/.nvm/nvm.sh && cd /repos/beachstats_backend/ && pm2 reload pm2/prod.config.js'
